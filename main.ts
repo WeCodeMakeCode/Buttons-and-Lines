@@ -2,121 +2,65 @@ namespace SpriteKind {
     export const Button = SpriteKind.create()
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    make_active(active_row, active_col - 1)
+    make_active(sprites.readDataNumber(active_button, "row"), sprites.readDataNumber(active_button, "col") - 1)
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    make_active(active_row + 1, active_col)
+    make_active(sprites.readDataNumber(active_button, "row") + 1, sprites.readDataNumber(active_button, "Col"))
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    b_selected_list[active_ndx] = !(b_selected_list[active_ndx])
-    set_border_to_status(active_ndx)
+    sprites.setDataBoolean(active_button, "selected", !(sprites.readDataBoolean(active_button, "selected")))
+    set_state_borders()
 })
 function make_active (row: number, col: number) {
-    prior_active_ndx = 4 * active_row + active_col
-    active_row = Math.abs(row) % 4
-    active_col = Math.abs(col) % 4
-    active_ndx = 4 * active_row + active_col
-    set_border_to_status(prior_active_ndx)
-    set_border_to_status(active_ndx)
+    active_button = buttons[4 * row + col]
+    set_state_borders()
 }
-function create_button (pColor: number) {
-    a_button = sprites.create(image.create(40, 30), SpriteKind.Button)
-    a_button.image.fill(pColor)
-    buttons.push(a_button)
-    b_selected_list.push(false)
-    set_border_to_status(buttons.length - 1)
-}
-controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    make_active(active_row, active_col + 1)
-})
-function set_border_to_status (ndx: number) {
-    if (ndx < buttons.length) {
-        let ndx = 0
-        if (b_selected_list[ndx]) {
-            set_border_color(ndx, 2)
-        } else if (ndx == active_ndx) {
-            set_border_color(ndx, 5)
+function set_state_borders () {
+    for (let value of buttons) {
+        if (sprites.readDataBoolean(value, "selected") == true) {
+            console.log("Selected")
+            set_border_color(value, 2)
+        } else if (value == active_button) {
+            console.log("Active")
+            set_border_color(value, 5)
         } else {
-            set_border_color(ndx, 15)
-        }
-    } else {
-        console.logValue("Active index", ndx)
-    }
-}
-function position_buttons () {
-    active_ndx = 0
-    for (let Row = 0; Row <= 3; Row++) {
-        for (let Col = 0; Col <= 3; Col++) {
-            buttons[active_ndx].left = 40 * Col
-            buttons[active_ndx].top = 30 * Row
-            active_ndx += 1
+            console.log("Black")
+            set_border_color(value, 15)
         }
     }
 }
-function set_active_ndx () {
-	
-}
-function set_border_color (ndx: number, color: number) {
-    buttons[ndx].image.drawRect(0, 0, 40, 30, color)
-    buttons[ndx].image.drawRect(1, 1, 38, 28, color)
-}
-controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    make_active(active_row - 1, active_col)
-})
-function set_button_colors () {
+function create_coloe_buttons () {
     for (let index = 0; index <= 14; index++) {
         Color = index + 1
-        create_button(Color)
+        a_button = sprites.create(image.create(40, 30), SpriteKind.Button)
+        sprites.setDataBoolean(a_button, "selected", false)
+        sprites.setDataNumber(a_button, "row", 40 * (index % 4))
+        sprites.setDataNumber(a_button, "col", 30 * Math.floor(index / 4))
+        a_button.image.fill(Color)
+        a_button.top = sprites.readDataNumber(a_button, "row")
+        a_button.left = sprites.readDataNumber(a_button, "col")
+        buttons.push(a_button)
     }
 }
-let Color = 0
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+	
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    make_active(sprites.readDataNumber(active_button, "row"), sprites.readDataNumber(active_button, "col") + 1)
+})
+function set_border_color (aSprite: Sprite, color: number) {
+    aSprite.image.drawRect(0, 0, 40, 30, color)
+    aSprite.image.drawRect(1, 1, 38, 28, color)
+}
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    make_active(sprites.readDataNumber(active_button, "row") - 1, sprites.readDataNumber(active_button, "Col"))
+})
 let a_button: Sprite = null
-let prior_active_ndx = 0
-let active_ndx = 0
-let active_col = 0
-let active_row = 0
-let b_selected_list: boolean[] = []
+let Color = 0
+let active_button: Sprite = null
 let buttons: Sprite[] = []
 buttons = sprites.allOfKind(SpriteKind.Button)
-b_selected_list = []
 let yellow = 3
 scene.setBackgroundColor(15)
-set_button_colors()
-create_button(1)
-buttons[buttons.length - 1].setImage(img`
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 3 3 3 3 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 1 1 1 1 1 3 3 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-`)
-position_buttons()
-active_row = 0
-active_col = 0
-active_ndx = 0
-make_active(active_row, active_col)
+create_coloe_buttons()
+make_active(1, 1)
