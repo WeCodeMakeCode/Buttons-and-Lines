@@ -40,32 +40,63 @@ function set_state_borders () {
         }
     }
 }
+function do_Kal (aSprite: Sprite, colors_string: string) {
+    colors_list = colors_string.split("|")
+    cx = Math.floor(aSprite.width / 2)
+    cy = Math.floor(aSprite.height / 2)
+    n = 0
+    for (let index3 = 0; index3 <= aSprite.width - 2; index3++) {
+        aSprite.image.drawLine(cx, cy, index3, 0, parseFloat(colors_list[n]))
+        n = (n + 1) % colors_list.length
+    }
+    for (let index4 = 0; index4 <= aSprite.height - 2; index4++) {
+        aSprite.image.drawLine(cx, cy, aSprite.width - 1, index4, parseFloat(colors_list[n]))
+        n = (n + 1) % colors_list.length
+    }
+    for (let index5 = 0; index5 <= aSprite.width - 2; index5++) {
+        aSprite.image.drawLine(cx, cy, aSprite.width - index5 - 1, aSprite.height - 1, parseFloat(colors_list[n]))
+        n = (n + 1) % colors_list.length
+    }
+    for (let index6 = 0; index6 <= aSprite.height - 2; index6++) {
+        aSprite.image.drawLine(cx, cy, 0, aSprite.height - index6 - 1, parseFloat(colors_list[n]))
+        n = (n + 1) % colors_list.length
+    }
+}
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     colors = ""
-    for (let index = 0; index <= buttons.length - 1; index++) {
-        if (index == 0) {
-            colors = "" + index
+    for (let index2 = 0; index2 <= buttons.length - 1; index2++) {
+        if (index2 == 0) {
+            colors = "" + index2
         } else {
-            colors = "" + colors + "|" + index
+            colors = "" + colors + "|" + index2
         }
     }
+    do_Kal(screen_sprite, colors)
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     make_active(sprites.readDataNumber(active_button, "row"), sprites.readDataNumber(active_button, "col") + 1)
 })
-function set_border_color (aSprite: Sprite, color: number) {
-    aSprite.image.drawRect(0, 0, 40, 30, color)
-    aSprite.image.drawRect(1, 1, 38, 28, color)
+function set_border_color (aSprite: Sprite, aColor: number) {
+    aSprite.image.drawRect(0, 0, 40, 30, aColor)
+    aSprite.image.drawRect(1, 1, 38, 28, aColor)
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     make_active(sprites.readDataNumber(active_button, "row") - 1, sprites.readDataNumber(active_button, "col"))
 })
-let colors = ""
+let colors: string = []
+let n = 0
+let cy = 0
+let cx = 0
+let colors_list: string[] = []
 let Col = 0
 let Row = 0
 let active_button: Sprite = null
 let a_button: Sprite = null
 let buttons: Sprite[] = []
+let screen_sprite: Sprite = null
+screen_sprite = sprites.create(image.create(160, 120), SpriteKind.Player)
+let n_points = 2 * screen_sprite.width
+n_points = n_points + 2 * screen_sprite.height
 buttons = sprites.allOfKind(SpriteKind.Button)
 create_buttons()
 make_active(2, 2)
