@@ -41,6 +41,7 @@ function set_state_borders () {
     }
 }
 function do_Kal (aSprite: Sprite, colors_string: string) {
+    aSprite.image.fill(15)
     colors_list = colors_string.split("|")
     cx = Math.floor(aSprite.width / 2)
     cy = Math.floor(aSprite.height / 2)
@@ -63,17 +64,28 @@ function do_Kal (aSprite: Sprite, colors_string: string) {
     }
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    color_stg = ""
-    for (let index2 = 0; index2 <= buttons.length - 1; index2++) {
-        if (index2 == 0) {
-            color_stg = "" + index2
-        } else {
-            color_stg = "" + color_stg + "|" + index2
+    if (screen_sprite.z == 3) {
+        create_buttons()
+        make_active(2, 2)
+        screen_sprite.z = 0
+    } else {
+        color_stg = ""
+        for (let index2 = 0; index2 <= buttons.length - 1; index2++) {
+            if (sprites.readDataBoolean(buttons[index2], "selected")) {
+                if (index2 == 0) {
+                    color_stg = "" + index2
+                } else {
+                    color_stg = "" + color_stg + "|" + index2
+                }
+            }
         }
-    }
-    if (color_stg.length > 0) {
-        screen_sprite.z = 2
-        do_Kal(screen_sprite, color_stg)
+        if (color_stg.length > 0) {
+            for (let value of buttons) {
+                value.destroy()
+            }
+            do_Kal(screen_sprite, color_stg)
+        }
+        screen_sprite.z = 3
     }
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -86,7 +98,7 @@ function set_border_color (aSprite: Sprite, aColor: number) {
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     make_active(sprites.readDataNumber(active_button, "row") - 1, sprites.readDataNumber(active_button, "col"))
 })
-let color_stg: string = []
+let color_stg = ""
 let n = 0
 let cy = 0
 let cx = 0
@@ -98,6 +110,7 @@ let a_button: Sprite = null
 let buttons: Sprite[] = []
 let screen_sprite: Sprite = null
 screen_sprite = sprites.create(image.create(160, 120), SpriteKind.Player)
+screen_sprite.image.fill(15)
 buttons = sprites.allOfKind(SpriteKind.Button)
 create_buttons()
 make_active(2, 2)
