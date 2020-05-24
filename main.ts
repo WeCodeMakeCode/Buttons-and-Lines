@@ -1,15 +1,6 @@
 namespace SpriteKind {
     export const Button = SpriteKind.create()
 }
-function set_active_ndx () {
-	
-}
-function set_button_colors () {
-    for (let index = 0; index <= 14; index++) {
-        Color = index + 1
-        create_button(Color)
-    }
-}
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     make_active(active_row, active_col - 1)
 })
@@ -42,14 +33,14 @@ function set_border_to_status (ndx: number) {
     if (ndx < buttons.length) {
         let ndx = 0
         if (b_selected_list[ndx]) {
-            set_border_color(active_ndx, 2)
+            set_border_color(ndx, 2)
         } else if (ndx == active_ndx) {
-            set_border_color(active_ndx, 5)
+            set_border_color(ndx, 5)
         } else {
             set_border_color(ndx, 15)
         }
     } else {
-        console.logValue("Active index", active_ndx)
+        console.logValue("Active index", ndx)
     }
 }
 function position_buttons () {
@@ -62,6 +53,9 @@ function position_buttons () {
         }
     }
 }
+function set_active_ndx () {
+	
+}
 function set_border_color (ndx: number, color: number) {
     buttons[ndx].image.drawRect(0, 0, 40, 30, color)
     buttons[ndx].image.drawRect(1, 1, 38, 28, color)
@@ -69,9 +63,15 @@ function set_border_color (ndx: number, color: number) {
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     make_active(active_row - 1, active_col)
 })
+function set_button_colors () {
+    for (let index = 0; index <= 14; index++) {
+        Color = index + 1
+        create_button(Color)
+    }
+}
+let Color = 0
 let a_button: Sprite = null
 let prior_active_ndx = 0
-let Color = 0
 let active_ndx = 0
 let active_col = 0
 let active_row = 0
