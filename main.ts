@@ -63,15 +63,17 @@ function do_Kal (aSprite: Sprite, colors_string: string) {
     }
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    colors = ""
+    color_string = ""
     for (let index2 = 0; index2 <= buttons.length - 1; index2++) {
         if (index2 == 0) {
-            colors = "" + index2
+            color_string = "" + index2
         } else {
-            colors = "" + colors + "|" + index2
+            color_string = "" + color_string + "|" + index2
         }
     }
-    do_Kal(screen_sprite, colors)
+    if (color_string.length > 0) {
+        do_Kal(screen_sprite, color_string)
+    }
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     make_active(sprites.readDataNumber(active_button, "row"), sprites.readDataNumber(active_button, "col") + 1)
@@ -83,7 +85,7 @@ function set_border_color (aSprite: Sprite, aColor: number) {
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     make_active(sprites.readDataNumber(active_button, "row") - 1, sprites.readDataNumber(active_button, "col"))
 })
-let colors: string = []
+let color_string: string = []
 let n = 0
 let cy = 0
 let cx = 0
@@ -95,8 +97,6 @@ let a_button: Sprite = null
 let buttons: Sprite[] = []
 let screen_sprite: Sprite = null
 screen_sprite = sprites.create(image.create(160, 120), SpriteKind.Player)
-let n_points = 2 * screen_sprite.width
-n_points = n_points + 2 * screen_sprite.height
 buttons = sprites.allOfKind(SpriteKind.Button)
 create_buttons()
 make_active(2, 2)
