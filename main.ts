@@ -86,19 +86,19 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (b_state_is_buttons) {
         unhide_buttons()
     } else {
-        color_stg = ""
+        cs = ""
         for (let index22 = 0; index22 <= buttons.length - 1; index22++) {
             if (sprites.readDataBoolean(buttons[index22], "selected")) {
                 if (index22 == 0) {
-                    color_stg = "" + index22
+                    cs = "" + index22
                 } else {
-                    color_stg = "" + color_stg + "|" + index22
+                    cs = "" + cs + "|" + index22
                 }
             }
         }
-        if (color_stg.length > 0) {
+        if (cs.length > 0) {
             hide_buttons()
-            do_Kal(screen_sprite, color_stg)
+            do_Kal(screen_sprite, cs)
         }
     }
 })
@@ -123,8 +123,8 @@ let a_button: Sprite = null
 let buttons: Sprite[] = []
 let b_state_is_buttons = false
 let screen_sprite: Sprite = null
-let color_stg = ""
-color_stg = ""
+let cs: string = []
+cs = ""
 screen_sprite = sprites.create(image.create(160, 120), SpriteKind.Player)
 screen_sprite.image.fill(15)
 b_state_is_buttons = true
