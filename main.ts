@@ -10,12 +10,12 @@ function unhide_buttons () {
 }
 function create_buttons () {
     buttons = sprites.allOfKind(SpriteKind.Button)
-    for (let index = 0; index <= 15; index++) {
+    for (let index2 = 0; index2 <= 15; index2++) {
         a_button = sprites.create(image.create(40, 30), SpriteKind.Button)
         sprites.setDataBoolean(a_button, "selected", false)
-        sprites.setDataNumber(a_button, "row", Math.floor(index / 4))
-        sprites.setDataNumber(a_button, "col", index % 4)
-        a_button.image.fill(index)
+        sprites.setDataNumber(a_button, "row", Math.floor(index2 / 4))
+        sprites.setDataNumber(a_button, "col", index2 % 4)
+        a_button.image.fill(index2)
         a_button.top = 30 * sprites.readDataNumber(a_button, "row")
         a_button.left = 40 * sprites.readDataNumber(a_button, "col")
         a_button.z = 1
@@ -47,13 +47,13 @@ function make_active (row: number, col: number) {
     }
 }
 function set_state_borders () {
-    for (let value of buttons) {
-        if (sprites.readDataBoolean(value, "selected") == true) {
-            set_border_color(value, 2)
-        } else if (value == active_button) {
-            set_border_color(value, 5)
+    for (let value2 of buttons) {
+        if (sprites.readDataBoolean(value2, "selected") == true) {
+            set_border_color(value2, 2)
+        } else if (value2 == active_button) {
+            set_border_color(value2, 5)
         } else {
-            set_border_color(value, 15)
+            set_border_color(value2, 15)
         }
     }
 }
@@ -87,12 +87,12 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         unhide_buttons()
     } else {
         color_stg = ""
-        for (let index2 = 0; index2 <= buttons.length - 1; index2++) {
-            if (sprites.readDataBoolean(buttons[index2], "selected")) {
-                if (index2 == 0) {
-                    color_stg = "" + index2
+        for (let index22 = 0; index22 <= buttons.length - 1; index22++) {
+            if (sprites.readDataBoolean(buttons[index22], "selected")) {
+                if (index22 == 0) {
+                    color_stg = "" + index22
                 } else {
-                    color_stg = "" + color_stg + "|" + index2
+                    color_stg = "" + color_stg + "|" + index22
                 }
             }
         }
@@ -112,7 +112,6 @@ function set_border_color (aSprite: Sprite, aColor: number) {
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     make_active(sprites.readDataNumber(active_button, "row") - 1, sprites.readDataNumber(active_button, "col"))
 })
-let color_stg = ""
 let n = 0
 let cy = 0
 let cx = 0
@@ -124,6 +123,8 @@ let a_button: Sprite = null
 let buttons: Sprite[] = []
 let b_state_is_buttons = false
 let screen_sprite: Sprite = null
+let color_stg = ""
+color_stg = ""
 screen_sprite = sprites.create(image.create(160, 120), SpriteKind.Player)
 screen_sprite.image.fill(15)
 b_state_is_buttons = true
