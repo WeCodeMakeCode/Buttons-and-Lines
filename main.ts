@@ -86,6 +86,7 @@ function do_Kal (aSprite: Sprite, colors_string: string) {
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     b_state_is_buttons = !(b_state_is_buttons)
+    screen_sprite.image.fill(15)
     if (b_state_is_buttons) {
         unhide_buttons()
     } else {
