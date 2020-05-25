@@ -8,6 +8,11 @@ function unhide_buttons () {
     }
     set_state_borders()
 }
+function if_buttons_make_active (row: number, col: number) {
+    if (b_state_is_buttons) {
+        make_active(row, col)
+    }
+}
 function create_buttons () {
     buttons = sprites.allOfKind(SpriteKind.Button)
     for (let index2 = 0; index2 <= 15; index2++) {
@@ -29,22 +34,20 @@ function hide_buttons () {
     }
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    make_active(sprites.readDataNumber(active_button, "row"), sprites.readDataNumber(active_button, "col") - 1)
+    if_buttons_make_active(sprites.readDataNumber(active_button, "row"), sprites.readDataNumber(active_button, "col") - 1)
 })
 controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
-    make_active(sprites.readDataNumber(active_button, "row") + 1, sprites.readDataNumber(active_button, "col"))
+    if_buttons_make_active(sprites.readDataNumber(active_button, "row") + 1, sprites.readDataNumber(active_button, "col"))
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     sprites.setDataBoolean(active_button, "selected", !(sprites.readDataBoolean(active_button, "selected")))
     set_state_borders()
 })
 function make_active (row: number, col: number) {
-    if (b_state_is_buttons) {
-        Row = Math.abs(row) % 4
-        Col = Math.abs(col) % 4
-        active_button = buttons[4 * Row + Col]
-        set_state_borders()
-    }
+    Row = Math.abs(row) % 4
+    Col = Math.abs(col) % 4
+    active_button = buttons[4 * Row + Col]
+    set_state_borders()
 }
 function set_state_borders () {
     for (let value2 of buttons) {
@@ -58,8 +61,6 @@ function set_state_borders () {
     }
 }
 function do_Kal (aSprite: Sprite, colors_string: string) {
-    aSprite.image.fill(9)
-    console.logValue("Z", aSprite.z)
     colors_list = colors_string.split("|")
     cx = Math.floor(aSprite.width / 2)
     cy = Math.floor(aSprite.height / 2)
@@ -103,14 +104,14 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    make_active(sprites.readDataNumber(active_button, "row"), sprites.readDataNumber(active_button, "col") + 1)
+    if_buttons_make_active(sprites.readDataNumber(active_button, "row"), sprites.readDataNumber(active_button, "col") + 1)
 })
 function set_border_color (aSprite: Sprite, aColor: number) {
     aSprite.image.drawRect(0, 0, 40, 30, aColor)
     aSprite.image.drawRect(1, 1, 38, 28, aColor)
 }
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    make_active(sprites.readDataNumber(active_button, "row") - 1, sprites.readDataNumber(active_button, "col"))
+    if_buttons_make_active(sprites.readDataNumber(active_button, "row") - 1, sprites.readDataNumber(active_button, "col"))
 })
 let n = 0
 let cy = 0
@@ -123,7 +124,7 @@ let a_button: Sprite = null
 let buttons: Sprite[] = []
 let b_state_is_buttons = false
 let screen_sprite: Sprite = null
-let cs: string = []
+let cs = ""
 cs = ""
 screen_sprite = sprites.create(image.create(160, 120), SpriteKind.Player)
 screen_sprite.image.fill(15)
