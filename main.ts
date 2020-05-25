@@ -8,11 +8,6 @@ function unhide_buttons () {
     }
     set_state_borders()
 }
-function if_buttons_make_active (row: number, col: number) {
-    if (b_state_is_buttons) {
-        make_active(row, col)
-    }
-}
 function create_buttons () {
     buttons = sprites.allOfKind(SpriteKind.Button)
     for (let index2 = 0; index2 <= 15; index2++) {
@@ -40,9 +35,16 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     if_buttons_make_active(sprites.readDataNumber(active_button, "row") + 1, sprites.readDataNumber(active_button, "col"))
 })
 controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
-    sprites.setDataBoolean(active_button, "selected", !(sprites.readDataBoolean(active_button, "selected")))
-    set_state_borders()
+    if (b_state_is_buttons) {
+        sprites.setDataBoolean(active_button, "selected", !(sprites.readDataBoolean(active_button, "selected")))
+        set_state_borders()
+    }
 })
+function if_buttons_make_active (row: number, col: number) {
+    if (b_state_is_buttons) {
+        make_active(row, col)
+    }
+}
 function make_active (row: number, col: number) {
     Row = Math.abs(row) % 4
     Col = Math.abs(col) % 4

@@ -1,5 +1,5 @@
 {
-    "name": "Color_Picker",
+    "name": "New Line Patterns",
     "dependencies": {
         "device": "*",
         "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.0.5"
