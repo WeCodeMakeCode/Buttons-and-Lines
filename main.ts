@@ -1,7 +1,15 @@
 namespace SpriteKind {
     export const Button = SpriteKind.create()
 }
+function unhide_buttons () {
+    for (let index = 0; index <= buttons.length - 1; index++) {
+        buttons[index].image.fill(index)
+        buttons[index].z = 1
+    }
+    set_state_borders()
+}
 function create_buttons () {
+    buttons = sprites.allOfKind(SpriteKind.Button)
     for (let index = 0; index <= 15; index++) {
         a_button = sprites.create(image.create(40, 30), SpriteKind.Button)
         sprites.setDataBoolean(a_button, "selected", false)
@@ -10,7 +18,14 @@ function create_buttons () {
         a_button.image.fill(index)
         a_button.top = 30 * sprites.readDataNumber(a_button, "row")
         a_button.left = 40 * sprites.readDataNumber(a_button, "col")
+        a_button.z = 1
         buttons.push(a_button)
+    }
+}
+function hide_buttons () {
+    for (let value of buttons) {
+        value.image.fill(15)
+        value.z = -1
     }
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -24,10 +39,12 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
     set_state_borders()
 })
 function make_active (row: number, col: number) {
-    Row = Math.abs(row) % 4
-    Col = Math.abs(col) % 4
-    active_button = buttons[4 * Row + Col]
-    set_state_borders()
+    if (b_state_is_buttons) {
+        Row = Math.abs(row) % 4
+        Col = Math.abs(col) % 4
+        active_button = buttons[4 * Row + Col]
+        set_state_borders()
+    }
 }
 function set_state_borders () {
     for (let value of buttons) {
@@ -41,7 +58,8 @@ function set_state_borders () {
     }
 }
 function do_Kal (aSprite: Sprite, colors_string: string) {
-    aSprite.image.fill(15)
+    aSprite.image.fill(9)
+    console.logValue("Z", aSprite.z)
     colors_list = colors_string.split("|")
     cx = Math.floor(aSprite.width / 2)
     cy = Math.floor(aSprite.height / 2)
@@ -64,10 +82,9 @@ function do_Kal (aSprite: Sprite, colors_string: string) {
     }
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (screen_sprite.z == 3) {
-        create_buttons()
-        make_active(2, 2)
-        screen_sprite.z = 0
+    b_state_is_buttons = !(b_state_is_buttons)
+    if (b_state_is_buttons) {
+        unhide_buttons()
     } else {
         color_stg = ""
         for (let index2 = 0; index2 <= buttons.length - 1; index2++) {
@@ -80,12 +97,9 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
             }
         }
         if (color_stg.length > 0) {
-            for (let value of buttons) {
-                value.destroy()
-            }
+            hide_buttons()
             do_Kal(screen_sprite, color_stg)
         }
-        screen_sprite.z = 3
     }
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -108,9 +122,10 @@ let Row = 0
 let active_button: Sprite = null
 let a_button: Sprite = null
 let buttons: Sprite[] = []
+let b_state_is_buttons = false
 let screen_sprite: Sprite = null
 screen_sprite = sprites.create(image.create(160, 120), SpriteKind.Player)
 screen_sprite.image.fill(15)
-buttons = sprites.allOfKind(SpriteKind.Button)
+b_state_is_buttons = true
 create_buttons()
 make_active(2, 2)
