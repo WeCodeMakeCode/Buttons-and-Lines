@@ -45,24 +45,7 @@ function if_buttons_make_active (row: number, col: number) {
         make_active(row, col)
     }
 }
-function make_active (row: number, col: number) {
-    Row = Math.abs(row) % 4
-    Col = Math.abs(col) % 4
-    active_button = buttons[4 * Row + Col]
-    set_state_borders()
-}
-function set_state_borders () {
-    for (let value2 of buttons) {
-        if (sprites.readDataBoolean(value2, "selected") == true) {
-            set_border_color(value2, 2)
-        } else if (value2 == active_button) {
-            set_border_color(value2, 5)
-        } else {
-            set_border_color(value2, 15)
-        }
-    }
-}
-function do_Kal (aSprite: Sprite, colors_string: string) {
+function do_lines_pattern (aSprite: Sprite, colors_string: string) {
     colors_list = colors_string.split("|")
     cx = Math.floor(aSprite.width / 2)
     cy = Math.floor(aSprite.height / 2)
@@ -84,31 +67,51 @@ function do_Kal (aSprite: Sprite, colors_string: string) {
         n = (n + 1) % colors_list.length
     }
 }
+function make_active (row: number, col: number) {
+    Row = Math.abs(row) % 4
+    Col = Math.abs(col) % 4
+    active_button = buttons[4 * Row + Col]
+    set_state_borders()
+}
+function set_state_borders () {
+    for (let value2 of buttons) {
+        if (sprites.readDataBoolean(value2, "selected") == true) {
+            set_border_color(value2, 2)
+        } else if (value2 == active_button) {
+            set_border_color(value2, 5)
+        } else {
+            set_border_color(value2, 15)
+        }
+    }
+}
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     b_state_is_buttons = !(b_state_is_buttons)
     screen_sprite.image.fill(15)
     if (b_state_is_buttons) {
         unhide_buttons()
     } else {
-        cs = ""
-        for (let index22 = 0; index22 <= buttons.length - 1; index22++) {
-            if (sprites.readDataBoolean(buttons[index22], "selected")) {
-                if (index22 == 0) {
-                    cs = "" + index22
-                } else {
-                    cs = "" + cs + "|" + index22
-                }
-            }
-        }
+        make_cs_string_from_colors_of_selected_buttons()
         if (cs.length > 0) {
             hide_buttons()
-            do_Kal(screen_sprite, cs)
+            do_lines_pattern(screen_sprite, cs)
         }
     }
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
     if_buttons_make_active(sprites.readDataNumber(active_button, "row"), sprites.readDataNumber(active_button, "col") + 1)
 })
+function make_cs_string_from_colors_of_selected_buttons () {
+    cs = ""
+    for (let index22 = 0; index22 <= buttons.length - 1; index22++) {
+        if (sprites.readDataBoolean(buttons[index22], "selected")) {
+            if (index22 == 0) {
+                cs = "" + index22
+            } else {
+                cs = "" + cs + "|" + index22
+            }
+        }
+    }
+}
 function set_border_color (aSprite: Sprite, aColor: number) {
     aSprite.image.drawRect(0, 0, 40, 30, aColor)
     aSprite.image.drawRect(1, 1, 38, 28, aColor)
@@ -116,12 +119,12 @@ function set_border_color (aSprite: Sprite, aColor: number) {
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     if_buttons_make_active(sprites.readDataNumber(active_button, "row") - 1, sprites.readDataNumber(active_button, "col"))
 })
+let Col = 0
+let Row = 0
 let n = 0
 let cy = 0
 let cx = 0
 let colors_list: string[] = []
-let Col = 0
-let Row = 0
 let active_button: Sprite = null
 let a_button: Sprite = null
 let buttons: Sprite[] = []
