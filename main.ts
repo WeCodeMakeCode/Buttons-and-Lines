@@ -1,13 +1,6 @@
 namespace SpriteKind {
     export const Button = SpriteKind.create()
 }
-function unhide_buttons () {
-    for (let index = 0; index <= buttons.length - 1; index++) {
-        buttons[index].image.fill(index)
-        buttons[index].z = 1
-    }
-    set_state_borders()
-}
 function create_buttons () {
     buttons = sprites.allOfKind(SpriteKind.Button)
     for (let index2 = 0; index2 <= 15; index2++) {
@@ -18,14 +11,8 @@ function create_buttons () {
         a_button.image.fill(index2)
         a_button.top = 30 * sprites.readDataNumber(a_button, "row")
         a_button.left = 40 * sprites.readDataNumber(a_button, "col")
-        a_button.z = 1
+        a_button.z = 0
         buttons.push(a_button)
-    }
-}
-function hide_buttons () {
-    for (let value of buttons) {
-        value.image.fill(15)
-        value.z = -1
     }
 }
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -42,8 +29,15 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 function if_buttons_make_active (row: number, col: number) {
     if (b_state_is_buttons) {
-        make_active(row, col)
+        Row = Math.abs(row) % 4
+        Col = Math.abs(col) % 4
+        active_button = buttons[4 * Row + Col]
+        set_state_borders()
     }
+}
+function uncover_buttons () {
+    behind_draw_on_sprite.z = -2
+    draw_on_sprite.z = -1
 }
 function do_lines_pattern (aSprite: Sprite, colors_string: string) {
     colors_list = colors_string.split("|")
@@ -67,12 +61,6 @@ function do_lines_pattern (aSprite: Sprite, colors_string: string) {
         n = (n + 1) % colors_list.length
     }
 }
-function make_active (row: number, col: number) {
-    Row = Math.abs(row) % 4
-    Col = Math.abs(col) % 4
-    active_button = buttons[4 * Row + Col]
-    set_state_borders()
-}
 function set_state_borders () {
     for (let value2 of buttons) {
         if (sprites.readDataBoolean(value2, "selected") == true) {
@@ -86,14 +74,14 @@ function set_state_borders () {
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     b_state_is_buttons = !(b_state_is_buttons)
-    screen_sprite.image.fill(15)
+    draw_on_sprite.image.fill(15)
     if (b_state_is_buttons) {
-        unhide_buttons()
+        uncover_buttons()
     } else {
         make_cs_string_from_colors_of_selected_buttons()
         if (cs.length > 0) {
-            hide_buttons()
-            do_lines_pattern(screen_sprite, cs)
+            cover_buttons()
+            do_lines_pattern(draw_on_sprite, cs)
         }
     }
 })
@@ -112,6 +100,12 @@ function make_cs_string_from_colors_of_selected_buttons () {
         }
     }
 }
+function make_screen_size_sprites () {
+    draw_on_sprite = sprites.create(image.create(160, 120), SpriteKind.Player)
+    draw_on_sprite.image.fill(15)
+    behind_draw_on_sprite = sprites.create(image.create(160, 120), SpriteKind.Player)
+    behind_draw_on_sprite.image.fill(15)
+}
 function set_border_color (aSprite: Sprite, aColor: number) {
     aSprite.image.drawRect(0, 0, 40, 30, aColor)
     aSprite.image.drawRect(1, 1, 38, 28, aColor)
@@ -119,21 +113,26 @@ function set_border_color (aSprite: Sprite, aColor: number) {
 controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     if_buttons_make_active(sprites.readDataNumber(active_button, "row") - 1, sprites.readDataNumber(active_button, "col"))
 })
-let Col = 0
-let Row = 0
+function cover_buttons () {
+    behind_draw_on_sprite.z = 1
+    draw_on_sprite.z = 2
+}
 let n = 0
 let cy = 0
 let cx = 0
 let colors_list: string[] = []
+let draw_on_sprite: Sprite = null
+let behind_draw_on_sprite: Sprite = null
+let Col = 0
+let Row = 0
 let active_button: Sprite = null
 let a_button: Sprite = null
 let buttons: Sprite[] = []
 let b_state_is_buttons = false
-let screen_sprite: Sprite = null
 let cs = ""
 cs = ""
-screen_sprite = sprites.create(image.create(160, 120), SpriteKind.Player)
-screen_sprite.image.fill(15)
-b_state_is_buttons = true
+make_screen_size_sprites()
 create_buttons()
-make_active(2, 2)
+b_state_is_buttons = true
+uncover_buttons()
+if_buttons_make_active(2, 2)
